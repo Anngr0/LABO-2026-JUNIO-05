@@ -3,11 +3,219 @@
 
 using namespace std;
 
+// =========================
+// ESTRUCTURA MASCOTA
+// =========================
+
 struct Mascota {
+    int id;
     string nombre;
     string especie;
-    int edad;
 };
+
+// =========================
+// LISTA ENLAZADA
+// =========================
+
+struct NodoLista {
+    Mascota dato;
+    NodoLista* siguiente;
+};
+
+NodoLista* lista = NULL;
+
+// =========================
+// COLA DE ATENCION
+// =========================
+
+struct NodoCola {
+    string nombreMascota;
+    NodoCola* siguiente;
+};
+
+NodoCola* frente = NULL;
+NodoCola* fin = NULL;
+
+// =========================
+// PILA DE HISTORIAL
+// =========================
+
+struct NodoPila {
+    string accion;
+    NodoPila* siguiente;
+};
+
+NodoPila* cima = NULL;
+
+// =========================
+// FUNCIONES PILA
+// =========================
+
+void registrarHistorial(string texto) {
+
+    NodoPila* nuevo = new NodoPila;
+
+    nuevo->accion = texto;
+    nuevo->siguiente = cima;
+
+    cima = nuevo;
+}
+
+void mostrarHistorial() {
+
+    if (cima == NULL) {
+        cout << "\nNo hay historial registrado.\n";
+        return;
+    }
+
+    NodoPila* aux = cima;
+
+    cout << "\n===== HISTORIAL =====\n";
+
+    while (aux != NULL) {
+
+        cout << "- " << aux->accion << endl;
+
+        aux = aux->siguiente;
+    }
+}
+
+// =========================
+// FUNCIONES LISTA
+// =========================
+
+void registrarMascota() {
+
+    Mascota m;
+
+    cout << "\n===== REGISTRAR MASCOTA =====\n";
+
+    cout << "ID: ";
+    cin >> m.id;
+
+    cin.ignore();
+
+    cout << "Nombre: ";
+    getline(cin, m.nombre);
+
+    cout << "Especie: ";
+    getline(cin, m.especie);
+
+    NodoLista* nuevo = new NodoLista;
+
+    nuevo->dato = m;
+    nuevo->siguiente = lista;
+
+    lista = nuevo;
+
+    registrarHistorial("Mascota registrada: " + m.nombre);
+
+    cout << "\nMascota registrada con exito.\n";
+}
+
+void mostrarMascotas() {
+
+    if (lista == NULL) {
+        cout << "\nNo hay mascotas registradas.\n";
+        return;
+    }
+
+    NodoLista* aux = lista;
+
+    cout << "\n===== LISTA DE MASCOTAS =====\n";
+
+    while (aux != NULL) {
+
+        cout << "ID: " << aux->dato.id << endl;
+        cout << "Nombre: " << aux->dato.nombre << endl;
+        cout << "Especie: " << aux->dato.especie << endl;
+        cout << "------------------------\n";
+
+        aux = aux->siguiente;
+    }
+}
+
+// =========================
+// FUNCIONES COLA
+// =========================
+
+void registrarTurno() {
+
+    string nombre;
+
+    cin.ignore();
+
+    cout << "\nNombre de la mascota: ";
+    getline(cin, nombre);
+
+    NodoCola* nuevo = new NodoCola;
+
+    nuevo->nombreMascota = nombre;
+    nuevo->siguiente = NULL;
+
+    if (frente == NULL) {
+
+        frente = nuevo;
+        fin = nuevo;
+
+    } else {
+
+        fin->siguiente = nuevo;
+        fin = nuevo;
+    }
+
+    registrarHistorial("Turno registrado para: " + nombre);
+
+    cout << "\nTurno registrado correctamente.\n";
+}
+
+void atenderTurno() {
+
+    if (frente == NULL) {
+
+        cout << "\nNo hay mascotas en espera.\n";
+        return;
+    }
+
+    NodoCola* temp = frente;
+
+    cout << "\nAtendiendo a: "
+         << frente->nombreMascota << endl;
+
+    registrarHistorial("Mascota atendida: " + frente->nombreMascota);
+
+    frente = frente->siguiente;
+
+    delete temp;
+
+    if (frente == NULL) {
+        fin = NULL;
+    }
+}
+
+void mostrarTurnos() {
+
+    if (frente == NULL) {
+
+        cout << "\nNo hay turnos registrados.\n";
+        return;
+    }
+
+    NodoCola* aux = frente;
+
+    cout << "\n===== COLA DE ATENCION =====\n";
+
+    while (aux != NULL) {
+
+        cout << aux->nombreMascota << endl;
+
+        aux = aux->siguiente;
+    }
+}
+
+// =========================
+// MAIN
+// =========================
 
 int main() {
 
@@ -15,87 +223,55 @@ int main() {
 
     do {
 
-        cout << "\n=============================\n";
-        cout << " MENU - VETERINARIA\n";
-        cout << "=============================\n";
-        cout << "1. Registrar mascotas y generar reporte\n";
-        cout << "2. Salir del programa\n";
-        cout << "-----------------------------\n";
+        cout << "\n=================================\n";
+        cout << " SISTEMA DE GESTION VETERINARIA\n";
+        cout << "=================================\n";
+        cout << "1. Registrar mascota\n";
+        cout << "2. Mostrar mascotas\n";
+        cout << "3. Registrar turno\n";
+        cout << "4. Atender turno\n";
+        cout << "5. Mostrar cola de atencion\n";
+        cout << "6. Mostrar historial\n";
+        cout << "7. Salir\n";
+        cout << "---------------------------------\n";
         cout << "Seleccione una opcion: ";
         cin >> opcion;
 
-        switch(opcion) {
+        switch (opcion) {
 
-            case 1: {
-
-                cout << "\n--- SISTEMA DE REGISTRO DE MASCOTAS ---\n";
-
-                int cantidad;
-
-                cout << "Cuantas mascotas desea registrar? ";
-                cin >> cantidad;
-
-                Mascota mascotas[100];
-
-                int sumaEdades = 0;
-
-                cin.ignore();
-
-                for(int i = 0; i < cantidad; i++) {
-
-                    cout << "\nMascota #" << i + 1 << endl;
-
-                    cout << "Nombre: ";
-                    getline(cin, mascotas[i].nombre);
-
-                    cout << "Especie: ";
-                    getline(cin, mascotas[i].especie);
-
-                    cout << "Edad: ";
-                    cin >> mascotas[i].edad;
-
-                    sumaEdades += mascotas[i].edad;
-
-                    cin.ignore();
-                }
-
-                cout << "\n--- REPORTE FINAL ---\n";
-
-                for(int i = 0; i < cantidad; i++) {
-
-                    cout << "Mascota: "
-                         << mascotas[i].nombre
-                         << " | Especie: "
-                         << mascotas[i].especie
-                         << " | Edad: "
-                         << mascotas[i].edad;
-
-                    if(mascotas[i].edad >= 7) {
-                        cout << " [ADULTO]";
-                    } else {
-                        cout << " [JOVEN]";
-                    }
-
-                    cout << endl;
-                }
-
-                float promedio = (float)sumaEdades / cantidad;
-
-                cout << "\nPromedio de edad: "
-                     << promedio << endl;
-
+            case 1:
+                registrarMascota();
                 break;
-            }
 
             case 2:
-                cout << "\nSaliendo del programa...\n";
+                mostrarMascotas();
+                break;
+
+            case 3:
+                registrarTurno();
+                break;
+
+            case 4:
+                atenderTurno();
+                break;
+
+            case 5:
+                mostrarTurnos();
+                break;
+
+            case 6:
+                mostrarHistorial();
+                break;
+
+            case 7:
+                cout << "\nSaliendo del sistema...\n";
                 break;
 
             default:
                 cout << "\nOpcion invalida.\n";
         }
 
-    } while(opcion != 2);
+    } while (opcion != 7);
 
     return 0;
 }
