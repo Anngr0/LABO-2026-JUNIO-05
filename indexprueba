@@ -1,0 +1,101 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct Mascota {
+    string nombre;
+    string especie;
+    int edad;
+};
+
+int main() {
+
+    int opcion;
+
+    do {
+
+        cout << "\n=============================\n";
+        cout << " MENU - VETERINARIA\n";
+        cout << "=============================\n";
+        cout << "1. Registrar mascotas y generar reporte\n";
+        cout << "2. Salir del programa\n";
+        cout << "-----------------------------\n";
+        cout << "Seleccione una opcion: ";
+        cin >> opcion;
+
+        switch(opcion) {
+
+            case 1: {
+
+                cout << "\n--- SISTEMA DE REGISTRO DE MASCOTAS ---\n";
+
+                int cantidad;
+
+                cout << "Cuantas mascotas desea registrar? ";
+                cin >> cantidad;
+
+                Mascota mascotas[100];
+
+                int sumaEdades = 0;
+
+                cin.ignore();
+
+                for(int i = 0; i < cantidad; i++) {
+
+                    cout << "\nMascota #" << i + 1 << endl;
+
+                    cout << "Nombre: ";
+                    getline(cin, mascotas[i].nombre);
+
+                    cout << "Especie: ";
+                    getline(cin, mascotas[i].especie);
+
+                    cout << "Edad: ";
+                    cin >> mascotas[i].edad;
+
+                    sumaEdades += mascotas[i].edad;
+
+                    cin.ignore();
+                }
+
+                cout << "\n--- REPORTE FINAL ---\n";
+
+                for(int i = 0; i < cantidad; i++) {
+
+                    cout << "Mascota: "
+                         << mascotas[i].nombre
+                         << " | Especie: "
+                         << mascotas[i].especie
+                         << " | Edad: "
+                         << mascotas[i].edad;
+
+                    if(mascotas[i].edad >= 7) {
+                        cout << " [ADULTO]";
+                    } else {
+                        cout << " [JOVEN]";
+                    }
+
+                    cout << endl;
+                }
+
+                float promedio = (float)sumaEdades / cantidad;
+
+                cout << "\nPromedio de edad: "
+                     << promedio << endl;
+
+                break;
+            }
+
+            case 2:
+                cout << "\nSaliendo del programa...\n";
+                break;
+
+            default:
+                cout << "\nOpcion invalida.\n";
+        }
+
+    } while(opcion != 2);
+
+    return 0;
+}
